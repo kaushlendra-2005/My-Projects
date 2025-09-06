@@ -1,65 +1,148 @@
-import { useState } from "react";
-import axios from "axios";
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import Header from './components/Header';
+import SearchBar from './components/SearchBar';
+import CurrentWeather from './components/CurrentWeather';
+import Forecast from './components/Forecast';
+import WeatherMap from './components/WeatherMap';
+import Favorites from './components/Favorites';
 
-function App() {
-  const [city, setCity] = useState("");
-  const [weather, setWeather] = useState(null);
-  const [error, setError] = useState("");
+const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
+const BASE = import.meta.env.VITE_OPENWEATHER_BASE || 'https://api.openweathermap.org/data/2.5';
 
-  const API_KEY = "YOUR_API_KEY_HERE"; // Replace with your OpenWeatherMap API key
+export default function App() {
+  const [city, setCity] = useState('');
+  const [coords, setCoords] = useState(null);      // { lat, lon }
+  const [current, setCurrent] = useState(null);    // current weather data
+  const [forecast, setForecast] = useState([]);    // 5-day summary
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState('');
 
-  const fetchWeather = async () => {
-    try {
-      setError("");
-      const response = await axios.get(
-        `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`
-      );
-      setWeather(response.data);
-    } catch (error) {
-      setError("City not found or API error.");
-      setWeather(null);
-      console.log(error);
-      
+  // Try to get user location on first load
+  useEffect(() => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => setCoords({ lat: coords.latitude, lon: coords.longitude }),
+      () => {} // silent fail (user denied), they can search by city
+    );
+  }, []);
+
+  // Fetch by coords (on geolocation) or when city changes from favorites/search
+  useEffect(() => {
+    if (coords) {
+      fetchByCoords(coords.lat, coords.lon);
     }
-  };
+  }, [coords]);
+
+  async function fetchByCoords(lat, lon) {
+    setLoading(true); setErr('');
+    try {
+      const [cur, fc] = await Promise.all([
+        axios.get(`${BASE}/weather`, { params: { lat, lon, units: 'metric', appid: API_KEY } }),
+        axios.get(`${BASE}/forecast`, { params: { lat, lon, units: 'metric', appid: API_KEY } })
+      ]);
+      setCurrent(cur.data);
+      setForecast(summarizeForecast(fc.data));
+      setCity(cur.data.name || '');
+    } catch (e) {
+      setErr('Failed to load weather for your location.');
+      console.log(e);
+      
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function fetchByCity(name) {
+    if (!name.trim()) return;
+    setLoading(true); setErr('');
+    try {
+      // Get current -> extract coords -> get forecast
+      const cur = await axios.get(`${BASE}/weather`, {
+        params: { q: name.trim(), units: 'metric', appid: API_KEY }
+      });
+      const { coord } = cur.data;
+      const fc = await axios.get(`${BASE}/forecast`, {
+        params: { lat: coord.lat, lon: coord.lon, units: 'metric', appid: API_KEY }
+      });
+      setCurrent(cur.data);
+      setForecast(summarizeForecast(fc.data));
+      setCoords({ lat: coord.lat, lon: coord.lon });
+      setCity(cur.data.name || name.trim());
+    } catch (e) {
+      setErr('City not found or API error.');
+      console.log(e);
+      
+      setCurrent(null);
+      setForecast([]);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-blue-100 p-6">
-      <h1 className="text-3xl font-bold mb-4">🌦️ Weather Dashboard</h1>
+    <div className="page">
+      <Header title="Weather Dashboard" />
 
-      <div className="flex gap-2 mb-4">
-        <input
-          type="text"
-          placeholder="Enter city..."
+      <div className="top-bar">
+        <SearchBar
           value={city}
-          onChange={(e) => setCity(e.target.value)}
-          className="px-3 py-2 border rounded-lg"
+          onChange={setCity}
+          onSearch={() => fetchByCity(city)}
+          loading={loading}
         />
-        <button
-          onClick={fetchWeather}
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-        >
-          Search
-        </button>
+        <Favorites
+          onPick={(c) => fetchByCity(c)}
+          onSave={() => city && fetchByCity(city)} // ensure normalized saved city
+          currentCity={city}
+        />
       </div>
 
-      {error && <p className="text-red-500">{error}</p>}
+      {err && <div className="error">{err}</div>}
 
-      {weather && (
-        <div className="bg-white p-4 rounded-lg shadow-md w-80 text-center">
-          <h2 className="text-xl font-semibold">{weather.name}</h2>
-          <p className="text-2xl">
-            🌡️ {Math.round(weather.main.temp)}°C
-          </p>
-          <p className="capitalize">
-            {weather.weather[0].description}
-          </p>
-          <p>💨 Wind: {weather.wind.speed} m/s</p>
-          <p>💧 Humidity: {weather.main.humidity}%</p>
-        </div>
-      )}
+      <div className="grid">
+        <section className="panel">
+          <h2 className="panel-title">Current Weather</h2>
+          <CurrentWeather data={current} loading={loading} />
+        </section>
+
+        <section className="panel">
+          <h2 className="panel-title">5-Day Forecast</h2>
+          <Forecast items={forecast} loading={loading} />
+        </section>
+
+        <section className="panel panel-full">
+          <h2 className="panel-title">Weather Map</h2>
+          <WeatherMap coords={coords} />
+        </section>
+      </div>
     </div>
   );
 }
 
-export default App;
+// Convert 3-hourly forecast list → one item per day (choose around 12:00 if available)
+function summarizeForecast(fc) {
+  if (!fc || !fc.list) return [];
+  const byDay = {};
+  for (const item of fc.list) {
+    const d = new Date(item.dt * 1000);
+    const key = d.toISOString().slice(0, 10); // YYYY-MM-DD
+    if (!byDay[key]) byDay[key] = [];
+    byDay[key].push(item);
+  }
+  const days = Object.keys(byDay).slice(0, 5);
+  return days.map((day) => {
+    const arr = byDay[day];
+    // prefer near 12:00; else middle item
+    const noon = arr.find(x => x.dt_txt.includes('12:00')) || arr[Math.floor(arr.length / 2)];
+    const temps = arr.map(x => x.main.temp);
+    const min = Math.round(Math.min(...temps));
+    const max = Math.round(Math.max(...temps));
+    return {
+      date: day,
+      description: noon.weather?.[0]?.description || '',
+      icon: noon.weather?.[0]?.icon || '01d',
+      min, max
+    };
+  });
+}
