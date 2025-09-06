@@ -13,7 +13,7 @@ export default function WeatherMap({ coords }) {
 
   return (
     <div className="map-wrap">
-      <MapContainer center={center} zoom={9} className="map">
+      <MapContainer center={center} zoom={10} className="map">
         {/* Basemap (OpenStreetMap or any other tiles you like) */}
         <TileLayer
           attribution="&copy; OpenStreetMap contributors"
