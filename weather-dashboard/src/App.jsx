@@ -12,22 +12,22 @@ const BASE = import.meta.env.VITE_OPENWEATHER_BASE || 'https://api.openweatherma
 
 export default function App() {
   const [city, setCity] = useState('');
-  const [coords, setCoords] = useState(null);      // { lat, lon }
-  const [current, setCurrent] = useState(null);    // current weather data
-  const [forecast, setForecast] = useState([]);    // 5-day summary
+  const [coords, setCoords] = useState(null);      //this is for { lat, lon }
+  const [current, setCurrent] = useState(null);    //this is for current weather data
+  const [forecast, setForecast] = useState([]);    //this is for 5-day summary
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState('');
 
-  // Try to get user location on first load
+  // Trying to get user location on first load by built-in browser object
   useEffect(() => {
     if (!navigator.geolocation) return;
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => setCoords({ lat: coords.latitude, lon: coords.longitude }),
-      () => {} // silent fail (user denied), they can search by city
+      () => {} // silent fail (when user denied permission for location), they can search by city
     );
   }, []);
 
-  // Fetch by coords (on geolocation) or when city changes from favorites/search
+  //We'll fetch by coordinates (on geolocation) or when city changes from favorites/search
   useEffect(() => {
     if (coords) {
       fetchByCoords(coords.lat, coords.lon);
@@ -57,7 +57,7 @@ export default function App() {
     if (!name.trim()) return;
     setLoading(true); setErr('');
     try {
-      // Get current -> extract coords -> get forecast
+      //first get current then extract coords then get forecast
       const cur = await axios.get(`${BASE}/weather`, {
         params: { q: name.trim(), units: 'metric', appid: API_KEY }
       });
@@ -120,13 +120,13 @@ export default function App() {
   );
 }
 
-// Convert 3-hourly forecast list → one item per day (choose around 12:00 if available)
+//converting 3-hourly forecast list into one item per day (choose around 12:00 if available)
 function summarizeForecast(fc) {
   if (!fc || !fc.list) return [];
   const byDay = {};
   for (const item of fc.list) {
     const d = new Date(item.dt * 1000);
-    const key = d.toISOString().slice(0, 10); // YYYY-MM-DD
+    const key = d.toISOString().slice(0, 10); //formatting for YYYY-MM-DD
     if (!byDay[key]) byDay[key] = [];
     byDay[key].push(item);
   }
