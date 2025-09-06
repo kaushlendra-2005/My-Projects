@@ -1,3 +1,5 @@
+
+
 export default function Forecast({ items, loading }) {
   if (loading && items.length === 0) return <div className="skeleton">Loading forecast…</div>;
   if (!items || items.length === 0) return <p className="muted">No forecast yet.</p>;

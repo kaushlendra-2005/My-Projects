@@ -5,9 +5,7 @@
     "react-leaflet": "^5.0.0",
     "dev":"vite",
     "build": "vite build",
-    "preview": "vite preview",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "preview": "vite preview"
   }
 
 }

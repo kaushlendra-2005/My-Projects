@@ -1,4 +1,4 @@
-import useLocalStorage from "../hooks/useLocalstorage";
+import useLocalStorage from '../hooks/useLocalStorage';
 
 export default function Favorites({ onPick, onSave, currentCity }) {
   const [favs, setFavs] = useLocalStorage('favorites', []);
