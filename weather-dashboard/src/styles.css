@@ -58,8 +58,9 @@ body {
 .search {
   display: flex;
   gap: 8px;
-  width: 100%;      /* Use full available width */
-  max-width: 600px; /* Prevent it from getting too wide on desktop */
+  width: 500px; /* Set your desired fixed width here */
+  margin-left: auto;
+  margin-right: auto;
 }
 .search input {
   flex: 1;
@@ -150,4 +151,9 @@ body {
   width: 100%; 
   border-radius: 12px; 
   border: 1px solid #283155; 
+}
+@media (max-width: 720px) {
+  .search {
+    width: 100%; /* Use full width on smaller screens */
+  }
 }
