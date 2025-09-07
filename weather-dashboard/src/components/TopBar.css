@@ -1,0 +1,63 @@
+.top-bar {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.search-bar input {
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  flex: 1;
+}
+
+.search-bar button {
+  background: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.search-bar button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.favorites {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.fav-list {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.fav-chip {
+  display: flex;
+  align-items: center;
+  background: #e3f2fd;
+  padding: 0.25rem 0.5rem;
+  border-radius: 16px;
+  font-size: 0.9rem;
+}
+
+.fav-chip button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: #1976d2;
+  margin-right: 0.5rem;
+}
+
+.fav-chip i {
+  cursor: pointer;
+  margin-left: 0.25rem;
+  font-style: normal;
+  color: #c62828;
+}

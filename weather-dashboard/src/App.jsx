@@ -81,6 +81,8 @@ export default function App() {
   }
 
   return (
+    <>
+    <title>Weather Dashboard</title>
     <div className="page">
       <Header title="Weather Dashboard" />
 
@@ -117,6 +119,7 @@ export default function App() {
         </section>
       </div>
     </div>
+    </>
   );
 }
 
