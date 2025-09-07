@@ -1,6 +1,6 @@
 import { MapContainer, TileLayer } from 'react-leaflet';
 
-const TILE_BASE = import.meta.env.VITE_TILE_BASE || 'https://tile.openweathermap.org/map';
+const TILE_BASE = import.meta.env.VITE_TILE_BASE;
 const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
 
 // You can change 'temp_new' to other layers: clouds_new, precip_new, pressure_new, wind_new
