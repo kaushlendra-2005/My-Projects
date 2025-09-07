@@ -12,7 +12,7 @@ const BASE = import.meta.env.VITE_OPENWEATHER_BASE || 'https://api.openweatherma
 
 export default function App() {
   const [city, setCity] = useState('');
-  const [coords, setCoords] = useState(null);
+  const [coords, setCoords] = useState({ lat: 28.7041, lon: 77.1025 }); // Default to Delhi
   const [current, setCurrent] = useState(null);
   const [forecast, setForecast] = useState([]);
   const [loading, setLoading] = useState(false);
