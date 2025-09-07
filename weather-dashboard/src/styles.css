@@ -128,4 +128,11 @@ body {
 .forecast-card .min { color: var(--muted); }
 
 .map-wrap { height: 380px; }
-.map { height: 100%; width: 100%; border-radius: 12px; border: 1px solid #283155; }
+
+/* Change this class name from '.map' to '.leaflet-container' */
+.leaflet-container { 
+  height: 100%; 
+  width: 100%; 
+  border-radius: 12px; 
+  border: 1px solid #283155; 
+}
