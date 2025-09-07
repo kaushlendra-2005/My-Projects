@@ -7,6 +7,9 @@
   --danger: #ff6b6b;
 }
 
+body, html {
+  overflow-x: hidden;
+}
 * { box-sizing: border-box; }
 html,#root { height: 100%; }
 body {
@@ -27,7 +30,12 @@ body {
 
 }
 
-.page { max-width: 1500px; margin: 0 auto; padding: 20px; }
+.page { 
+  max-width: 1500px; 
+  margin: 0 auto; 
+  padding: 20px; 
+  width: 100%; /* Add this line */
+}
 
 .header {
   display: flex; align-items: center; gap: 12px; margin-bottom: 14px;justify-content: center;
@@ -48,8 +56,10 @@ body {
 }
 
 .search {
-  display: flex; gap: 8px;
-  width: 60%;
+  display: flex;
+  gap: 8px;
+  width: 100%;      /* Use full available width */
+  max-width: 600px; /* Prevent it from getting too wide on desktop */
 }
 .search input {
   flex: 1; padding: 10px 12px; border-radius: 8px; border: 1px solid #2a3150;
