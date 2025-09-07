@@ -62,8 +62,13 @@ body {
   max-width: 600px; /* Prevent it from getting too wide on desktop */
 }
 .search input {
-  flex: 1; padding: 10px 12px; border-radius: 8px; border: 1px solid #2a3150;
-  background: #0f1528; color: var(--text);
+  flex: 1;
+  min-width: 0; /* Add this line to fix the overflow */
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #2a3150;
+  background: #0f1528;
+  color: var(--text);
 }
 .search button {
   padding: 10px 14px; border-radius: 8px; border: 1px solid #2a3150;
