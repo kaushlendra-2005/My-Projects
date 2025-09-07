@@ -7,12 +7,11 @@
   --danger: #ff6b6b;
 }
 
-body, html {
-  overflow-x: hidden;
-}
+
 * { box-sizing: border-box; }
-html,#root { height: 100%; }
+html,#root { height: 100%;overflow-x: hidden; }
 body {
+  overflow-x: hidden;
   margin: 0;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, Noto Sans, "Apple Color Emoji", "Segoe UI Emoji";
   background: linear-gradient(180deg, #284690, #0f1b40 80%);
@@ -120,8 +119,23 @@ body {
 }
 
 .current { display: grid; grid-template-columns: 1fr; gap: 8px; }
-.current-main { display: flex; align-items: center; gap: 14px; }
-.current .city { font-size: 20px; font-weight: 700; }
+.current-main {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap; /* Add this line */
+}
+/* Target the container of the city name in the "Current Weather" section */
+.current .city {
+  /* This allows a long, unbreakable word to be broken at any point */
+  word-break: break-all;
+
+  /* A softer alternative to the above, breaks only at appropriate points */
+  overflow-wrap: break-word;
+
+  /* This is crucial if the element is a child of a flex container */
+  min-width: 0;
+}
 .current .temp { font-size: 36px; font-weight: 800; }
 .current .desc { display: flex; align-items: center; gap: 8px; }
 
