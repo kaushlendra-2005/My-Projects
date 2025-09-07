@@ -63,8 +63,10 @@ body {
   margin-right: auto;
 }
 .search input {
-  flex: 1;
-  min-width: 0; /* Add this line to fix the overflow */
+  /* Make the flex behavior and min-width non-negotiable */
+  flex: 1 1 0 !important;
+  min-width: 0 !important;
+
   padding: 10px 12px;
   border-radius: 8px;
   border: 1px solid #2a3150;
