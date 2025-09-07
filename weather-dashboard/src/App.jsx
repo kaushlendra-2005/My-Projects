@@ -70,7 +70,7 @@ export default function App() {
       setCoords({ lat: coord.lat, lon: coord.lon });
       setCity(cur.data.name || name.trim());
     } catch (e) {
-      setErr('City not found or API error.');
+      setErr('City not found or API error or network problem.');
       console.log(e);
       
       setCurrent(null);
