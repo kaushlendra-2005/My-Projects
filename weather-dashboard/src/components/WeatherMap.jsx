@@ -46,11 +46,11 @@ export default function WeatherMap({ coords }) {
         />
 
         {/* Marker that updates with coords */}
-        <Marker position={center}>
+        {/* <Marker position={center}>
           <Popup>
             📍 {coords ? "Your Selected Location" : "Default: New Delhi"}
           </Popup>
-        </Marker>
+        </Marker> if you have proper leaflet setupp on your pc then you can enable it*/}
 
         {/* Add the new component here */}
         <MapUpdater coords={coords} />
